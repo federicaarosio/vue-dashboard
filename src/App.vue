@@ -1,17 +1,21 @@
 <template>
+  <div id="content-wrapper">
     <AppAside/>
     <main>
-      <h1>
-        Main
-      </h1>
+      <AppCard />
+      <AppCard />
     </main>
+  </div>
 </template>
 
 <script>
 import AppAside from './components/AppAside.vue';
+import AppCard from './components/AppCard.vue';
+
 export default {
   components: {
     AppAside,
+    AppCard,
   },
 }
 </script>

@@ -1,5 +1,41 @@
+@use "./partials/variables" as *;
+@use "./partials/mixins" as *;
+
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+    @include reset;
+}
+
+#content-wrapper {
+    @include flex(row, start, start);
+    gap: 2rem;
+
+    padding: 2rem;
+    background-image: url(../assets/images/bg.svg);
+    // credits: https://www.freepik.com/free-vector/abstract-fluid-gradient-banner-with-dynamic-motion-trendy-design_38125521.htm#fromView=search&page=1&position=50&uuid=a4ce5c3d-3795-462e-a23f-b3523a1e031a
+    background-position: center;
+    background-size: cover;
+}
+
+aside {
+    height: calc(100vh - 4rem);
+    width: 15%;
+    /* From https://css.glass */
+    background: rgba(255, 255, 255, 0.441);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.31);
+    padding: $medium-padding;
+}
+
+main {
+    height: calc(100vh - 4rem);
+    width: calc(100vw - 15%);
+    @include flex(row, start, start);
+    gap: 1rem;
+}
+
+ul {
+    list-style: none;
 }
