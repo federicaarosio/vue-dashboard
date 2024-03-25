@@ -1,7 +1,11 @@
 <template>
   <div id="content-wrapper">
-    <AppAside/>
-    <AppMain />
+    <div class="container-fluid">
+      <div class="row">
+        <AppAside class="col-2" />
+        <AppMain class="col-10"/>
+      </div>
+    </div>
   </div>
 </template>
 

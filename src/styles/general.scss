@@ -6,19 +6,13 @@
 }
 
 #content-wrapper {
-    @include flex(row, start, start);
-    gap: 2rem;
-
     padding: 2rem;
-    background-image: url(../assets/images/bg.svg);
-    // credits: https://www.freepik.com/free-vector/abstract-fluid-gradient-banner-with-dynamic-motion-trendy-design_38125521.htm#fromView=search&page=1&position=50&uuid=a4ce5c3d-3795-462e-a23f-b3523a1e031a
-    background-position: center;
-    background-size: cover;
+    background-color: #D9AFD9;
+    background-image: linear-gradient(0deg, #D9AFD9 0%, #97D9E1 100%);
 }
 
 aside {
     height: calc(100vh - 4rem);
-    width: 15%;
     /* From https://css.glass */
     background: rgba(255, 255, 255, 0.441);
     border-radius: 16px;
@@ -29,12 +23,6 @@ aside {
     padding: $medium-padding;
 }
 
-main {
-    height: calc(100vh - 4rem);
-    width: calc(100vw - 15%);
-    @include flex(row, start, start);
-    gap: 1rem;
-}
 
 ul {
     list-style: none;

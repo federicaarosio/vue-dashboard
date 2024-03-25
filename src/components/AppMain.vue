@@ -1,19 +1,33 @@
 <template>
-    <div id="card-wrapper">
-        <!-- Primo grafico: Monthly Connections -->
-        <LineChart :chartData="monthlyConnectionsData" :chartOptions="monthlyConnectionsOptions"
-            :loaded="loadedmonthlyConnectionsData" />
-    </div>
-
-    <div id="card-wrapper">
-        <!-- Secondo grafico: Users Age Ranges -->
-        <BarChart :chartData="usersAgeRangesData" :chartOptions="usersAgeRangesOptions" :loaded="loadedAgeRangeData" />
-    </div>
-
-    <div id="card-wrapper">
-        <!-- Terzo grafico: Devices -->
-        <DoughnutChart :chartData="devicesData" :chartOptions="devicesOptions" :loaded="loadedDevicesData" />
-    </div>
+    <main>
+        <div id="card-wrapper" class="mb-2rem">
+            <h2>Title</h2>
+            <LineChart class="custom-line" :chartData="monthlyConnectionsData" :chartOptions="monthlyConnectionsOptions"
+                :loaded="loadedmonthlyConnectionsData" />
+        </div>
+        <div class="diagrams-wrapper mb-2rem">
+            <div id="card-wrapper" class="col-50">
+                <h2>Title</h2>
+                <BarChart class="custom-bar" :chartData="usersAgeRangesData" :chartOptions="usersAgeRangesOptions"
+                    :loaded="loadedAgeRangeData" />
+            </div>
+            <div id="card-wrapper" class="col-50">
+                <h2>Title</h2>
+                <DoughnutChart class="custom-doughnut" :chartData="devicesData" :chartOptions="devicesOptions" :loaded="loadedDevicesData" />
+            </div>
+        </div>
+        <hr class="mb-2rem">
+        <div id="card-wrapper" class="mb-2rem">
+            <h2>Solar Power</h2>
+            <p>
+                Questa card visualizza in tempo reale i dati di produzione giornaliera dell'impianto fotovoltaico del nostro ufficio. Sebbene l'impianto non sia ancora operativo, è possibile esplorare un mockup dei dati generati ogni ora.
+            </p>
+            <p>
+                Cliccando il pulsante "play", viene avviata la simulazione della produzione giornaliera dell'impianto fotovoltaico. Ogni secondo, viene aggiunto un valore preso dall'array dei rendimenti, rappresentando il rendimento dell'impianto in quella specifica ora del giorno. Inoltre, viene applicata una variazione casuale del ±5% per garantire una varietà nei dati simulati. I valori aggiornati vengono quindi visualizzati sul grafico in tempo reale.
+            </p>
+            <button type="button" class="btn btn-light rounded-5">Play</button>
+        </div>
+    </main>
 </template>
 
 <script>
@@ -42,7 +56,7 @@ export default {
                 datasets: [
                     {
                         label: 'Monthly Connections',
-                        backgroundColor: '#f87979',
+                        backgroundColor: ['#8c8ec7'],
                         data: []
                     }
                 ]
@@ -50,6 +64,13 @@ export default {
 
             monthlyConnectionsOptions: {
                 responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                    display: true,
+                    text: 'Monthly Connections'
+                    }
+                },
                 scales: {
                     x: {
                         title: {
@@ -75,7 +96,7 @@ export default {
                 datasets: [
                     {
                         label: 'Users Age Range',
-                        backgroundColor: '#007bff',
+                        backgroundColor: ['#8c8ec7', '#97D9E1', '#D9AFD9', '#f5a960', '#eb99a5'],
                         data: []
                     }
                 ]
@@ -83,6 +104,7 @@ export default {
 
             usersAgeRangesOptions: {
                 responsive: true,
+                maintainAspectRatio: false,
                 scales: {
                     x: {
                         title: {
@@ -96,7 +118,8 @@ export default {
                             text: 'Connections'
                         }
                     }
-                }
+                },
+
             },
 
 
@@ -108,7 +131,7 @@ export default {
                 datasets: [
                     {
                         label: 'Operating System',
-                        backgroundColor: '#007bff',
+                        backgroundColor: ['#8c8ec7', '#97D9E1', '#D9AFD9', '#f5a960', '#eb99a5'],
                         data: []
                     }
                 ]
@@ -116,6 +139,13 @@ export default {
 
             devicesOptions: {
                 responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'right'
+                    }
+                },
                 scales: {
                     x: {
                         title: {
@@ -193,14 +223,49 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@use "../styles/partials/variables" as *;
+@use "../styles/partials/mixins" as *;
+
+main {
+    height: calc(100vh - 4rem);
+    overflow-y: scroll;
+    padding: 0 2rem;
+}
+
 #card-wrapper {
     /* From https://css.glass */
-    background: rgba(255, 255, 255, 0.441);
+    background: rgba(255, 255, 255, 0.495);
     border-radius: 16px;
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
     border: 1px solid rgba(255, 255, 255, 0.31);
     padding: 2rem
+}
+
+.mb-2rem {
+    margin-bottom: 2rem;
+}
+
+.custom-line {
+    height: 270px;
+}
+
+.diagrams-wrapper {
+    @include flex(row, start, center);
+    gap: 2rem;
+
+    .col-50 {
+        width: 50%;
+    }
+
+    .custom-bar {
+        height: 270px;
+    }
+
+    .custom-doughnut {
+        height: 270px;
+    }
+
 }
 </style>
