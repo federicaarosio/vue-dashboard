@@ -3,13 +3,13 @@
         <TopCharts />
 
         <div class="card-wrapper mb-2rem">
-            <h2>Solar Power</h2>
+            <h3>Solar Power</h3>
             <p>
-                Questa card visualizza in tempo reale i dati di produzione giornaliera dell'impianto fotovoltaico del
+                Questa card visualizza i dati di produzione giornaliera dell'impianto fotovoltaico del
                 nostro ufficio. Sebbene l'impianto non sia ancora operativo, è possibile esplorare un mockup dei dati
                 generati ogni ora.
             </p>
-            <p>
+            <!-- <p>
                 Cliccando il pulsante "play", viene avviata la simulazione della produzione giornaliera dell'impianto
                 fotovoltaico. Ogni secondo, viene aggiunto un valore preso dall'array dei rendimenti, rappresentando il
                 rendimento dell'impianto in quella specifica ora del giorno. Inoltre, viene applicata una variazione
@@ -17,21 +17,18 @@
                 visualizzati sul grafico in tempo reale.
             </p>
             <div class="text-center">
-                <button type="button" class="btn btn-light rounded-4" @click="generateSolarChart">Play</button>
-            </div>
+                <button type="button" class="btn btn-light rounded-4" @click="startSimulation">Play</button>
+            </div> -->
 
-            <LineChart class="custom-line" :chartData="solarPowerData" :chartOptions="solarPowerOptions"
+            <LineChart class="custom-line" :chartData="chartData" :chartOptions="solarPowerOptions"
                 :loaded="loadedSolarPowerData" />
         </div>
     </main>
 </template>
 
 <script>
-
 import LineChart from './LineChart.vue';
-
 import TopCharts from './TopCharts.vue';
-
 
 export default {
     components: {
@@ -41,22 +38,8 @@ export default {
 
     data() {
         return {
-            //Dati per performance pannelli solari
-            interval: null,
-
             loadedSolarPowerData: false,
-
-            solarPowerData: {
-                labels: [],
-                datasets: [
-                    {
-                        label: 'Solar Power',
-                        backgroundColor: ['#8c8ec7'],
-                        data: []
-                    }
-                ]
-            },
-
+            solarPowerData: [],
             solarPowerOptions: {
                 responsive: true,
                 maintainAspectRatio: false,
@@ -81,17 +64,28 @@ export default {
                     }
                 }
             },
-        }
+
+            interval: null
+        };
     },
 
     computed: {
-        chartData() { return /* mutable chart data */ },
-        chartOptions() { return /* mutable chart options */ }
+        chartData() {
+            return {
+                labels: this.solarPowerData.map((_, index) => index),
+                datasets: [
+                    {
+                        label: 'Solar Power',
+                        backgroundColor: '#f5a960',
+                        data: this.solarPowerData
+                        // data: this.solarPowerData.map(performance => ({ y: performance }))
+                    }
+                ]
+            };
+        }
     },
 
     methods: {
-
-
         generateGaussianArray() {
             const nElements = 24;
             const mu = 12; // Media della gaussiana
@@ -106,11 +100,10 @@ export default {
 
             // Genera i valori della gaussiana per ciascun indice
             for (let i = 0; i < nElements; i++) {
-                const x = i;
-                let value = gaussian(x);
+                let value = gaussian(i);
 
-                // Applica una variazione casuale tra -5% e +5%
-                const variation = (Math.random() * 0.1) - 0.05;
+                // Applica una variazione casuale tra -10% e +10%
+                const variation = (Math.random() * 0.2) - 0.1;
                 value += value * variation;
 
                 // Normalizza il valore tra 0 e 95
@@ -127,17 +120,53 @@ export default {
 
         generateSolarChart() {
             // Dati di prestazione solare e ore
-            const standardPerformance = this.generateGaussianArray();
-            const hours = Array.from({ length: 24 }, (_, i) => i); // Array di ore da 0 a 23
-
-            this.solarPowerData.labels = hours;
-            this.solarPowerData.datasets[0].data = standardPerformance;
-
+            this.solarPowerData = this.generateGaussianArray();
             this.loadedSolarPowerData = true;
         },
 
+        // Funzione per avviare l'aggiornamento del grafico
+        startSimulation() {
+            // Svuota l'array solarPowerData prima di iniziare la simulazione
+            console.log(this.solarPowerData)
+            this.solarPowerData = [];
+            // Array contenente i rendimenti per ogni ora del giorno
+            const solarPerformances = this.generateGaussianArray();
+            let index = 0;
+
+            // Intervallo che esegue l'azione ogni secondo
+            this.interval = setInterval(() => {
+                // Controlla se ci sono ancora valori da inviare al grafico
+                if (index < solarPerformances.length) {
+                    // Ottieni il rendimento per l'ora corrente
+                    const performance = solarPerformances[index];
+                    console.log(`ora: ${index}, rendimento: ${performance}`)
+
+                    // // Aggiorna il valore del grafico
+                    this.updateChart(performance);
+
+                    // Incrementa l'indice per ottenere il rendimento per l'ora successiva
+                    index++;
+
+                } else {
+                    // Se hai inviato tutti i valori, ferma l'intervallo
+                    clearInterval(this.interval);
+                    console.log(this.solarPowerData)
+
+                }
+            }, 1000); // Intervallo di 1 secondo
+        },
+
+        updateChart(performance) {
+            // Aggiorna i dati del grafico con il nuovo valore
+            // this.solarPowerData.push({ y: performance });
+            this.solarPowerData.push(performance);
+        }
     },
-}
+
+    mounted() {
+        this.generateSolarChart();
+    }
+};
 </script>
 
 <style lang="scss" scoped>

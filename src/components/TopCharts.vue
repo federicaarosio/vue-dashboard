@@ -1,18 +1,18 @@
 <template lang="">
     <div>
         <div class="card-wrapper mb-2rem">
-            <h2>Title</h2>
+            <h2>Monthly Connections</h2>
             <LineChart class="custom-line" :chartData="monthlyConnectionsData" :chartOptions="monthlyConnectionsOptions"
                 :loaded="loadedmonthlyConnectionsData" />
         </div>
         <div class="diagrams-wrapper mb-2rem">
             <div class="card-wrapper col-50">
-                <h2>Title</h2>
+                <h2>Users Age Range</h2>
                 <BarChart class="custom-bar" :chartData="usersAgeRangesData" :chartOptions="usersAgeRangesOptions"
                     :loaded="loadedAgeRangeData" />
             </div>
             <div class="card-wrapper col-50">
-                <h2>Title</h2>
+                <h2>Devices</h2>
                 <DoughnutChart class="custom-doughnut" :chartData="devicesData" :chartOptions="devicesOptions"
                     :loaded="loadedDevicesData" />
             </div>
@@ -42,7 +42,7 @@ export default {
                 labels: [],
                 datasets: [
                     {
-                        label: 'Monthly Connections',
+                        label: 'Monthly',
                         backgroundColor: ['#8c8ec7'],
                         data: []
                     }
