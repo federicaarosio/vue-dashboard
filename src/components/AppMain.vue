@@ -13,19 +13,31 @@
             </div>
             <div id="card-wrapper" class="col-50">
                 <h2>Title</h2>
-                <DoughnutChart class="custom-doughnut" :chartData="devicesData" :chartOptions="devicesOptions" :loaded="loadedDevicesData" />
+                <DoughnutChart class="custom-doughnut" :chartData="devicesData" :chartOptions="devicesOptions"
+                    :loaded="loadedDevicesData" />
             </div>
         </div>
         <hr class="mb-2rem">
         <div id="card-wrapper" class="mb-2rem">
             <h2>Solar Power</h2>
             <p>
-                Questa card visualizza in tempo reale i dati di produzione giornaliera dell'impianto fotovoltaico del nostro ufficio. Sebbene l'impianto non sia ancora operativo, è possibile esplorare un mockup dei dati generati ogni ora.
+                Questa card visualizza in tempo reale i dati di produzione giornaliera dell'impianto fotovoltaico del
+                nostro ufficio. Sebbene l'impianto non sia ancora operativo, è possibile esplorare un mockup dei dati
+                generati ogni ora.
             </p>
             <p>
-                Cliccando il pulsante "play", viene avviata la simulazione della produzione giornaliera dell'impianto fotovoltaico. Ogni secondo, viene aggiunto un valore preso dall'array dei rendimenti, rappresentando il rendimento dell'impianto in quella specifica ora del giorno. Inoltre, viene applicata una variazione casuale del ±5% per garantire una varietà nei dati simulati. I valori aggiornati vengono quindi visualizzati sul grafico in tempo reale.
+                Cliccando il pulsante "play", viene avviata la simulazione della produzione giornaliera dell'impianto
+                fotovoltaico. Ogni secondo, viene aggiunto un valore preso dall'array dei rendimenti, rappresentando il
+                rendimento dell'impianto in quella specifica ora del giorno. Inoltre, viene applicata una variazione
+                casuale del ±5% per garantire una varietà nei dati simulati. I valori aggiornati vengono quindi
+                visualizzati sul grafico in tempo reale.
             </p>
-            <button type="button" class="btn btn-light rounded-5">Play</button>
+            <div class="text-center">
+                <button type="button" class="btn btn-light rounded-4" @click="generateSolarChart">Play</button>
+            </div>
+
+            <LineChart class="custom-line" :chartData="solarPowerData" :chartOptions="solarPowerOptions"
+                :loaded="loadedSolarPowerData" />
         </div>
     </main>
 </template>
@@ -47,7 +59,6 @@ export default {
 
     data() {
         return {
-
             // Dati per il primo grafico: Monthly Connections
             loadedmonthlyConnectionsData: false,
 
@@ -67,8 +78,8 @@ export default {
                 maintainAspectRatio: false,
                 plugins: {
                     title: {
-                    display: true,
-                    text: 'Monthly Connections'
+                        display: true,
+                        text: 'Monthly Connections'
                     }
                 },
                 scales: {
@@ -162,8 +173,57 @@ export default {
                 }
             },
 
+
+            //Dati per performance pannelli solari
+            interval: null,
+
+
+
+            loadedSolarPowerData: false,
+
+            solarPowerData: {
+                labels: [],
+                datasets: [
+                    {
+                        label: 'Solar Power',
+                        backgroundColor: ['#8c8ec7'],
+                        data: []
+                    }
+                ]
+            },
+
+            solarPowerOptions: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Solar Power'
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Hours'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Performances'
+                        }
+                    }
+                }
+            },
         }
     },
+
+    computed: {
+        chartData() { return /* mutable chart data */ },
+        chartOptions() { return /* mutable chart options */ }
+    },
+
     methods: {
         getMonthlyConnections() {
             axios.get('http://localhost:3000/MonthlyConnections')
@@ -213,7 +273,60 @@ export default {
                 });
         },
 
+        generateGaussianArray() {
+            const nElements = 24;
+            const mu = 12; // Media della gaussiana
+            const sigma = 3; // Deviazione standard della gaussiana
+
+            // Funzione per calcolare il valore della gaussiana in un dato punto x
+            function gaussian(x) {
+                return Math.exp(-(Math.pow(x - mu, 2) / (2 * Math.pow(sigma, 2))));
+            }
+
+            // Inizializza un array vuoto
+            const result = [];
+
+            // Genera i valori della gaussiana per ciascun indice
+            for (let i = 0; i < nElements; i++) {
+                // Calcola il valore x associato all'indice i
+                const x = i;
+
+                // Calcola il valore della gaussiana per x
+                let value = gaussian(x);
+
+                // Applica una variazione casuale tra -5% e +5%
+                const variation = (Math.random() * 0.1) - 0.05;
+                value += value * variation;
+
+                // Normalizza il valore tra 0 e 95
+                value *= 95 / 100;
+
+                // Assicura che il valore non superi mai 95
+                value = Math.min(value, 0.95);
+
+                // Aggiungi il valore all'array risultante
+                result.push(Math.round(value * 100));
+            }
+
+            // Ritorna l'array risultante
+            return result;
+        },
+
+        generateSolarChart() {
+            // Dati di prestazione solare e ore
+            const standardPerformance = this.generateGaussianArray();
+            const hours = Array.from({ length: 24 }, (_, i) => i); // Array di ore da 0 a 23
+            
+            // Aggiorna i dati del grafico solare
+            this.solarPowerData.labels = hours;
+            this.solarPowerData.datasets[0].data = standardPerformance;
+
+            // Imposta il flag loadedSolarPowerData su true per indicare che i dati sono stati aggiornati
+            this.loadedSolarPowerData = true;
+        },
+
     },
+
     mounted() {
         this.getMonthlyConnections();
         this.getUsersAgeRanges();
